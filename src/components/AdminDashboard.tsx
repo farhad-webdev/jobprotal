@@ -102,7 +102,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onJobChange, cur
     if (action === 'delete') {
       await Promise.all(selectedJobIds.map(id => fetch(`/api/jobs/${id}`, { method: 'DELETE' })));
     } else {
-      const status = action === 'publish' ? 'active' : 'archived';
+      const status = action === 'publish' ? 'published' : 'archived';
       await Promise.all(selectedJobIds.map(id => 
         fetch(`/api/jobs/${id}`, {
           method: 'PUT',
@@ -127,7 +127,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onJobChange, cur
     await fetch(`/api/jobs/${job.id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: 'active' })
+      body: JSON.stringify({ status: 'published' })
     });
     loadAll();
     onJobChange();
