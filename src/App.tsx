@@ -207,9 +207,18 @@ export default function App() {
 
       {/* Footer */}
       <footer className="border-t border-slate-200 bg-white py-8 text-center text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto px-4 space-y-2">
-          <p className="text-slate-700 font-medium">Job listings are summarized from original sources. Please verify details and apply on the original site.</p>
-          <p className="text-slate-400">JobPulse CMS & AI Job Portal • Enterprise Recruitment & Automated Deadline Architecture</p>
+        <div className="max-w-7xl mx-auto px-4">
+          <p className="text-slate-700 font-medium">
+            Developed by{' '}
+            <a
+              href="https://www.farhadhossain.online/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-indigo-600 hover:text-indigo-800 hover:underline"
+            >
+              Farhad Hossain
+            </a>
+          </p>
         </div>
       </footer>
 
