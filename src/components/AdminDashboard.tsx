@@ -86,7 +86,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onJobChange, cur
       id: undefined,
       postedDate: new Date().toISOString().split('T')[0]
     };
-    await fetch('/api/jobs', {
+    await fetch('/api/admin/jobs', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)

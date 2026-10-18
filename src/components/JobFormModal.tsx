@@ -88,14 +88,13 @@ export const JobFormModal: React.FC<JobFormModalProps> = ({ job, onClose, onSave
     };
 
     try {
-      const url = job ? `/api/jobs/${job.id}` : '/api/jobs';
+      const url = job ? `/api/jobs/${job.id}` : '/api/admin/jobs';
       const method = job ? 'PUT' : 'POST';
 
       const res = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': 'demo-agent-key-secret'
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(payload)
       });

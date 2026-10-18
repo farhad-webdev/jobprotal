@@ -86,22 +86,64 @@ create table applications (
 
 ## Installation & Run
 
+> Use **Bun** (recommended — `bun.lock` is committed). `npm install` may fail on an
+> esbuild peer-dependency conflict; if you must use npm, run
+> `npm install --legacy-peer-deps`.
+
 1. Install dependencies:
 ```bash
-npm install
+bun install
 ```
 
-2. Configure environment variables in `.env`:
+2. Set up Supabase (required — the backend stores everything in Postgres):
+   - Create a project at https://supabase.com
+   - Open **SQL Editor** and run, in order:
+     1. `supabase/migrations/001_initial_schema.sql`
+     2. `supabase/migrations/002_add_missing_columns.sql`
+     3. (optional demo data) `supabase/seed.sql`
+
+3. Configure environment variables in `.env`:
 ```bash
 cp .env.example .env
 ```
+Fill in `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (Dashboard > Project
+Settings > API > `service_role` — server-only, never expose it),
+`AGENT_API_KEY` (long random string), and `GEMINI_API_KEY`.
 
-3. Run development server:
+4. Run development server:
 ```bash
-npm run dev
+bun run dev
 ```
 
-4. Build for production:
+5. Build + start production:
 ```bash
-npm run build
+bun run build && bun run start
+# or with plain node (works after build): npm start
 ```
+
+## Deploy (Node host — Railway / Render / Fly.io)
+
+The app needs a long-running Node process (`server.cjs` serves both the API and
+the built frontend). It does **not** work on static-only hosts (GitHub Pages)
+or serverless-only hosts (Vercel) as-is.
+
+1. Push this repo to your host, set the same env vars as in `.env.example`.
+2. Build command: `bun install && bun run build` (or `npm install --legacy-peer-deps && npm run build`)
+3. Start command: `bun run start` (or `npm start`)
+
+## Agent API
+
+The browser agent posts jobs with the `AGENT_API_KEY`:
+
+```bash
+curl -X POST https://YOUR-HOST/api/jobs \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: $AGENT_API_KEY" \
+  -d '{"title":"...","companyName":"...","location":"...","deadline":"2026-12-31",
+       "applyUrl":"https://...","sourceUrl":"https://...","sourceName":"..."}'
+```
+
+- Valid posts are saved as `draft` for admin review (`/api/admin/jobs?status=draft`
+  via the dashboard Review queue).
+- Past deadlines are rejected (`EXPIRED_DEADLINE`); duplicate `source_url`
+  values are rejected (`DUPLICATE_SOURCE_URL`); max 50 posts/hour per key.
