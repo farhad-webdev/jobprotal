@@ -6,18 +6,30 @@ interface AdminLoginProps {
   onBack: () => void;
 }
 
+// Demo-level admin credentials. NOTE: this repo is public, so these values are
+// visible in the built JS. For real security, switch to Supabase Auth later.
+// Override via Railway/Vercel env: VITE_ADMIN_EMAIL / VITE_ADMIN_PASSWORD.
+const ADMIN_EMAIL = (import.meta as any).env?.VITE_ADMIN_EMAIL || 'admin@jobpulse.com';
+const ADMIN_PASSWORD = (import.meta as any).env?.VITE_ADMIN_PASSWORD || 'admin123';
+
 export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, onBack }) => {
   const [email, setEmail] = useState('admin@jobpulse.com');
-  const [password, setPassword] = useState('••••••••');
+  const [password, setPassword] = useState('');
   const [role, setRole] = useState<'admin' | 'editor'>('admin');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+    if (email.trim().toLowerCase() !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
+      setError('Invalid email or password.');
+      return;
+    }
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      onLoginSuccess(role, email);
+      onLoginSuccess(role, email.trim().toLowerCase());
     }, 600);
   };
 
@@ -73,6 +85,10 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, onBack }
               <option value="editor">Content Editor (Manage Jobs & Review)</option>
             </select>
           </div>
+
+          {error && (
+            <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-2.5">{error}</p>
+          )}
 
           <button
             type="submit"

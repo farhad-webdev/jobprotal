@@ -67,6 +67,20 @@ export default function App() {
     fetchActiveCount();
   }, []);
 
+  // Hidden admin access: Ctrl+Shift+A opens the admin login (no visible link on site)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+        e.preventDefault();
+        setCurrentPath('/admin');
+        setRouteParam(null);
+        window.scrollTo({ top: 0 });
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 4000);
