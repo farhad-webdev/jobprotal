@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Job } from '../types';
 import { Bookmark, MapPin, Briefcase, DollarSign, Clock, Building2, ChevronRight, Trash2 } from 'lucide-react';
 import { JobDetailModal } from './JobDetailModal';
+import { formatSalary } from '../utils/format';
 
 interface SavedJobsProps {
   savedJobs: Job[];
@@ -89,7 +90,7 @@ export const SavedJobs: React.FC<SavedJobsProps> = ({ savedJobs, onToggleSave })
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-emerald-700 font-medium flex items-center space-x-1">
                     <DollarSign className="w-3.5 h-3.5" />
-                    <span>{job.currency}{job.salaryMin.toLocaleString()} - {job.currency}{job.salaryMax.toLocaleString()}</span>
+                    <span>{formatSalary(job)}</span>
                   </span>
                   {(() => {
                     const badgeClass = 

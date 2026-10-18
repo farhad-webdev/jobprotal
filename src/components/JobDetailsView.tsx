@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Job } from '../types';
 import { ArrowLeft, MapPin, Briefcase, DollarSign, Clock, Building2, CheckCircle2, Bookmark, BookmarkCheck, Share2, AlertTriangle, ExternalLink, Calendar } from 'lucide-react';
+import { formatSalary } from '../utils/format';
 
 interface JobDetailsViewProps {
   jobId: string;
@@ -247,7 +248,7 @@ export const JobDetailsView: React.FC<JobDetailsViewProps> = ({ jobId, onBack, o
               <DollarSign className="w-3.5 h-3.5 text-emerald-600" />
               <span>Salary Range</span>
             </span>
-            <p className="font-medium text-emerald-700">{job.currency}{job.salaryMin.toLocaleString()} - {job.currency}{job.salaryMax.toLocaleString()}</p>
+            <p className="font-medium text-emerald-700">{formatSalary(job)}</p>
           </div>
 
           <div className="space-y-1">
@@ -351,7 +352,7 @@ export const JobDetailsView: React.FC<JobDetailsViewProps> = ({ jobId, onBack, o
                     </div>
                   </div>
                   <span className="text-xs font-medium text-emerald-700 bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-200">
-                    {rel.currency}{rel.salaryMin.toLocaleString()}
+                    {formatSalary(rel)}
                   </span>
                 </div>
               </div>

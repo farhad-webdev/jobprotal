@@ -1,6 +1,7 @@
 import React from 'react';
 import { Job } from '../types';
 import { X, MapPin, Briefcase, DollarSign, Clock, Bookmark, BookmarkCheck, Building2, CheckCircle2, Sparkles, ExternalLink } from 'lucide-react';
+import { formatSalary } from '../utils/format';
 
 interface JobDetailModalProps {
   job: Job | null;
@@ -89,7 +90,7 @@ export const JobDetailModal: React.FC<JobDetailModalProps> = ({ job, onClose, is
                 <DollarSign className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Salary</span>
               </span>
-              <p className="text-sm font-medium text-emerald-700 mt-0.5">{job.currency}{job.salaryMin.toLocaleString()}</p>
+              <p className="text-sm font-medium text-emerald-700 mt-0.5">{formatSalary(job)}</p>
             </div>
 
             <div className="p-3 bg-slate-50 border border-slate-200 rounded-2xl">

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Job } from '../types';
 import { Search, MapPin, Briefcase, DollarSign, Clock, Building2, Bookmark, BookmarkCheck, ChevronRight, ChevronLeft, AlertCircle } from 'lucide-react';
+import { formatSalary } from '../utils/format';
 
 interface JobListViewProps {
   initialSearch?: string;
@@ -284,7 +285,7 @@ export const JobListView: React.FC<JobListViewProps> = ({ initialSearch = '', on
                       <div className="flex items-center justify-between text-xs">
                         <span className="text-emerald-700 font-medium flex items-center space-x-1">
                           <DollarSign className="w-3.5 h-3.5" />
-                          <span>{job.currency}{job.salaryMin.toLocaleString()} - {job.currency}{job.salaryMax.toLocaleString()}</span>
+                          <span>{formatSalary(job)}</span>
                         </span>
                         {(() => {
                           const badgeClass = 

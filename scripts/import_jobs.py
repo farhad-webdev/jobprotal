@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
 Daily job importer for JobPulse CMS.
-Pulls fresh jobs from official free sources and posts them as drafts
-via the agent API for admin review.
+Pulls fresh jobs from official free sources and posts them via the agent API.
+By default jobs are auto-published (AUTO_PUBLISH=true); set AUTO_PUBLISH=false
+to leave them as drafts for admin review.
 
 Sources:
   - RemoteOK  (official public API, https://remoteok.com/api)
@@ -29,6 +30,8 @@ API_BASE = os.environ.get("API_BASE_URL", "").rstrip("/")
 KEY = os.environ.get("AGENT_API_KEY", "")
 MAX_JOBS = int(os.environ.get("MAX_JOBS", "8"))
 FRESH_DAYS = int(os.environ.get("FRESH_DAYS", "3"))
+# Auto-publish instead of leaving drafts (owner's choice: no manual approval wait)
+AUTO_PUBLISH = os.environ.get("AUTO_PUBLISH", "true").lower() == "true"
 
 if not API_BASE or not KEY:
     print("ERROR: API_BASE_URL and AGENT_API_KEY env vars are required")
@@ -217,7 +220,22 @@ for c in picked:
     try:
         with urllib.request.urlopen(req, timeout=30) as r:
             res = json.load(r)
-        print(f"  OK   [{c['category']}] {c['title'][:50]} -> {res.get('status')}")
+        job_id = res.get("id")
+        final_status = res.get("status")
+        # auto-publish so new jobs go public without waiting for manual approval
+        if AUTO_PUBLISH and job_id and final_status != "published":
+            pub_req = urllib.request.Request(
+                f"{API_BASE}/api/jobs/{job_id}/status",
+                data=json.dumps({"status": "published"}).encode(),
+                headers={"Content-Type": "application/json"},
+                method="PATCH",
+            )
+            try:
+                with urllib.request.urlopen(pub_req, timeout=30) as pr:
+                    final_status = json.load(pr).get("status", final_status)
+            except Exception as e:
+                print(f"  WARN publish failed for {job_id}: {e}")
+        print(f"  OK   [{c['category']}] {c['title'][:50]} -> {final_status}")
         posted += 1
     except urllib.error.HTTPError as e:
         print(f"  SKIP [{c['category']}] {c['title'][:50]} -> HTTP {e.code} {e.read().decode()[:100]}")
