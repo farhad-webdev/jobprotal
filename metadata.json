@@ -1,0 +1,6 @@
+{
+  "name": "JobPulse CMS & AI Job Portal",
+  "description": "Comprehensive Job Portal CMS with AI Agent job finder and automated deadline management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

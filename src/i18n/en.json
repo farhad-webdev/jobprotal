@@ -1,0 +1,34 @@
+{
+  "brand": "JobPulse CMS",
+  "tagline": "AI-Powered Verified Job Portal & Recruitment CMS",
+  "nav": {
+    "home": "Home",
+    "jobs": "Jobs",
+    "admin": "Admin CMS",
+    "saved": "Saved",
+    "postJob": "Post Job"
+  },
+  "hero": {
+    "title": "Discover Your Next Dream Career",
+    "subtitle": "Browse verified job openings with guaranteed future application deadlines. Sourced directly from employer official career pages and permitted portals.",
+    "searchPlaceholder": "Search job title, company, or skills...",
+    "searchButton": "Search Jobs"
+  },
+  "footer": {
+    "disclaimer": "Job listings are summarized from original sources. Please verify details and apply on the original site.",
+    "copyright": "JobPulse CMS & AI Job Portal. Enterprise Recruitment & Automated Deadline Architecture."
+  },
+  "common": {
+    "applyOnOriginal": "Apply on Original Site",
+    "saveJob": "Save Job",
+    "saved": "Saved",
+    "share": "Share",
+    "reportExpired": "Report Expired",
+    "daysLeft": "days left",
+    "deadline": "Deadline",
+    "salary": "Salary",
+    "location": "Location",
+    "type": "Job Type",
+    "source": "Source"
+  }
+}
