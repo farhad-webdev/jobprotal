@@ -148,13 +148,7 @@ export const JobDetailsView: React.FC<JobDetailsViewProps> = ({ jobId, onBack, o
         
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-slate-100 pb-8">
-          <div className="flex items-start space-x-5">
-            <img
-              src={job.companyLogo || 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=100&auto=format&fit=crop&q=80'}
-              alt={job.company}
-              className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border border-slate-200 bg-slate-50 shrink-0"
-            />
-            <div className="space-y-1.5">
+          <div className="flex items-start space-x-5"><div className="space-y-1.5">
               <div className="flex items-center space-x-2 flex-wrap gap-2">
                 <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-medium">
                   {job.source}
@@ -351,9 +345,7 @@ export const JobDetailsView: React.FC<JobDetailsViewProps> = ({ jobId, onBack, o
                 className="bg-white border border-slate-200 hover:border-indigo-300 rounded-2xl p-6 cursor-pointer transition-all hover:shadow-lg space-y-4"
               >
                 <div className="flex items-start justify-between">
-                  <div className="flex items-center space-x-3">
-                    <img src={rel.companyLogo || 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=100&auto=format&fit=crop&q=80'} alt={rel.company} className="w-10 h-10 rounded-xl object-cover border border-slate-200" />
-                    <div>
+                  <div className="flex items-center space-x-3"><div>
                       <h3 className="font-medium text-slate-900 text-sm hover:text-indigo-600 transition-colors">{rel.title}</h3>
                       <p className="text-xs text-slate-500">{rel.company} • {rel.location}</p>
                     </div>

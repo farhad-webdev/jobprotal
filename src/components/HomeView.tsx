@@ -155,13 +155,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, savedJobs, onTog
               >
                 <div>
                   <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center space-x-3">
-                      <img
-                        src={job.companyLogo || 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=100&auto=format&fit=crop&q=80'}
-                        alt={job.company}
-                        className="w-12 h-12 rounded-xl object-cover border border-slate-200 bg-slate-50 shrink-0"
-                      />
-                      <div>
+                    <div className="flex items-center space-x-3"><div>
                         <span className="text-xs text-indigo-600 font-medium flex items-center space-x-1">
                           <Building2 className="w-3.5 h-3.5 mr-1" />
                           <span>{job.company}</span>

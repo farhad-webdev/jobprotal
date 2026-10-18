@@ -25,13 +25,7 @@ export const JobDetailModal: React.FC<JobDetailModalProps> = ({ job, onClose, is
         
         {/* Header */}
         <div className="sticky top-0 bg-white/95 backdrop-blur border-b border-slate-100 p-6 flex items-start justify-between z-10">
-          <div className="flex items-start space-x-4">
-            <img 
-              src={job.companyLogo || 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=100&auto=format&fit=crop&q=80'} 
-              alt={job.company} 
-              className="w-14 h-14 rounded-2xl object-cover border border-slate-200 bg-slate-50"
-            />
-            <div>
+          <div className="flex items-start space-x-4"><div>
               <div className="flex items-center space-x-2">
                 <h2 className="text-xl sm:text-2xl font-medium text-slate-900">{job.title}</h2>
                 {job.source === 'ai-agent' && (
