@@ -1,0 +1,28 @@
+name: Daily Job Import
+
+# Automatically fetches fresh jobs from official free sources
+# (RemoteOK, Remotive, Prothom Alo RSS) and posts them as drafts
+# for admin review. Runs every morning Dhaka time + on demand.
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # 06:00 Asia/Dhaka (UTC+6)
+  workflow_dispatch: # manual "Run workflow" button in the Actions tab
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Import fresh jobs as drafts
+        run: python scripts/import_jobs.py
+        env:
+          AGENT_API_KEY: ${{ secrets.AGENT_API_KEY }}
+          API_BASE_URL: https://jobprotal-production.up.railway.app
+          MAX_JOBS: '8'
+          FRESH_DAYS: '3'
