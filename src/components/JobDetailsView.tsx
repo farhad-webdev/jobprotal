@@ -169,7 +169,7 @@ export const JobDetailsView: React.FC<JobDetailsViewProps> = ({ jobId, onBack, o
               href={job.applyUrl || job.sourceUrl || '#'}
               target="_blank"
               rel="noopener noreferrer"
-              className={`px-8 py-3.5 rounded-2xl font-medium text-sm shadow-md transition-all text-center flex items-center justify-center space-x-2 ${
+              className={`px-8 py-3.5 rounded-2xl font-medium text-sm shadow-md transition-all text-center flex items-center justify-center space-x-2 whitespace-nowrap shrink-0 ${
                 isExpired 
                   ? 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200' 
                   : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-600/20'
@@ -321,7 +321,7 @@ export const JobDetailsView: React.FC<JobDetailsViewProps> = ({ jobId, onBack, o
             href={job.applyUrl || job.sourceUrl || '#'}
             target="_blank"
             rel="noopener noreferrer"
-            className={`w-full sm:w-auto px-8 py-4 rounded-2xl font-medium text-sm shadow-md transition-all text-center flex items-center justify-center space-x-2 ${
+            className={`w-full sm:w-auto px-8 py-4 rounded-2xl font-medium text-sm shadow-md transition-all text-center flex items-center justify-center space-x-2 whitespace-nowrap shrink-0 ${
               isExpired 
                 ? 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200' 
                 : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-600/20'
@@ -351,7 +351,7 @@ export const JobDetailsView: React.FC<JobDetailsViewProps> = ({ jobId, onBack, o
                       <p className="text-xs text-slate-500">{rel.company} • {rel.location}</p>
                     </div>
                   </div>
-                  <span className="text-xs font-medium text-emerald-700 bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-200">
+                  <span className="text-xs font-medium text-emerald-700 bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-200 whitespace-nowrap shrink-0">
                     {formatSalary(rel)}
                   </span>
                 </div>
