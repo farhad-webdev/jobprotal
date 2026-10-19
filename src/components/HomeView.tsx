@@ -13,24 +13,44 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, savedJobs, onTog
   const [latestJobs, setLatestJobs] = useState<Job[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('All');
+  const [catCounts, setCatCounts] = useState<Record<string, number>>({});
+  const [locations, setLocations] = useState<string[]>(['All']);
 
   useEffect(() => {
     fetch('/api/jobs?status=active&limit=6')
       .then(res => res.json())
       .then(data => setLatestJobs(data.jobs || []))
       .catch(err => console.error(err));
+    // real category counts + locations (no dummy numbers)
+    fetch('/api/jobs?status=active&limit=500')
+      .then(res => res.json())
+      .then(data => {
+        const jobs: Job[] = data.jobs || [];
+        const counts: Record<string, number> = {};
+        const locs = new Set<string>();
+        jobs.forEach(j => {
+          if (j.category) counts[j.category] = (counts[j.category] || 0) + 1;
+          if (j.location) locs.add(j.location);
+        });
+        setCatCounts(counts);
+        setLocations(['All', ...Array.from(locs).sort()]);
+      })
+      .catch(err => console.error(err));
   }, []);
 
   const categories = [
-    { name: 'Engineering', icon: Code, count: '14+ jobs' },
-    { name: 'Product', icon: BriefcaseBusiness, count: '8+ jobs' },
-    { name: 'Design', icon: Palette, count: '6+ jobs' },
-    { name: 'Marketing', icon: Megaphone, count: '9+ jobs' },
-    { name: 'Sales', icon: TrendingUp, count: '5+ jobs' },
-    { name: 'Data', icon: Database, count: '7+ jobs' },
+    { name: 'Engineering', icon: Code },
+    { name: 'Product', icon: BriefcaseBusiness },
+    { name: 'Design', icon: Palette },
+    { name: 'Marketing', icon: Megaphone },
+    { name: 'Sales', icon: TrendingUp },
+    { name: 'Data', icon: Database },
   ];
 
-  const locations = ['All', 'San Francisco, CA', 'New York, NY', 'Remote', 'Dhaka, Bangladesh', 'Austin, TX', 'Seattle, WA'];
+  const catLabel = (name: string) => {
+    const n = catCounts[name] || 0;
+    return `${n} job${n === 1 ? '' : 's'}`;
+  };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -118,7 +138,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, savedJobs, onTog
                 </div>
                 <div>
                   <h3 className="font-medium text-slate-900 text-sm group-hover:text-indigo-600 transition-colors">{cat.name}</h3>
-                  <p className="text-xs text-slate-500 mt-0.5">{cat.count}</p>
+                  <p className="text-xs text-slate-500 mt-0.5">{catLabel(cat.name)}</p>
                 </div>
               </div>
             );
