@@ -11,6 +11,7 @@ Sources:
   - Prothom Alo stories.rss filtered for job circulars (official RSS feed)
   - Jugantor /job-seek listing (static HTML, article pages parsed for pub date)
   - Dainik Shiksha job-news category (JS-rendered; requires playwright)
+  - Arbeitnow (official public API, https://www.arbeitnow.com/api/job-board-api)
 
 Env vars:
   AGENT_API_KEY  (required) - x-api-key for POST /api/jobs
@@ -309,15 +310,46 @@ except ImportError:
 except Exception as e:
     print(f"Dainik Shiksha failed: {e}")
 
-# pick up to MAX_JOBS, preferring category diversity
-picked, seen_cats = [], set()
+# --- Arbeitnow (official public API, no key needed) ---
+try:
+    arb = fetch("https://www.arbeitnow.com/api/job-board-api")
+    ajobs = arb.get("data", []) if isinstance(arb, dict) else []
+    for j in ajobs:
+        ts = j.get("created_at") or 0
+        d = datetime.fromtimestamp(ts, tz=timezone.utc) if ts else None
+        if not d or (now - d).days > FRESH_DAYS:
+            continue
+        tags = j.get("tags", []) or []
+        jt = " ".join(j.get("job_types", []) or [])
+        comp = (j.get("company_name") or "").strip()
+        title = (j.get("title") or "").strip()
+        remote = j.get("remote")
+        candidates.append({
+            "title": title, "companyName": comp,
+            "location": "Remote" if remote else (j.get("location") or "On-site"),
+            "jobType": "Remote" if remote else "Full-time",
+            "category": map_category(tags, jt),
+            "salaryMin": None, "salaryMax": None,
+            "salaryText": "Negotiable", "salaryCurrency": "USD" if remote else "BDT",
+            "summary": f"{comp} is hiring a {title}." + (f" Focus areas: {', '.join(tags[:5])}." if tags else ""),
+            "applyUrl": j.get("url"), "sourceName": "Arbeitnow", "sourceUrl": j.get("url"),
+            "postedDate": d.date().isoformat(),
+            "deadline": (d + timedelta(days=30)).date().isoformat(),
+        })
+    print(f"After Arbeitnow: {len(candidates)} candidates")
+except Exception as e:
+    print(f"Arbeitnow fetch failed: {e}")
+
+# pick up to MAX_JOBS, capping each category for diversity
+picked, cat_n = [], {}
+per_cat = max(2, MAX_JOBS // 4)
 for c in sorted(candidates, key=lambda x: x["postedDate"], reverse=True):
     if not c["title"] or not c["companyName"] or not c["applyUrl"] or not c["sourceUrl"]:
         continue
-    if c["category"] in seen_cats and len(picked) >= MAX_JOBS // 2:
+    if cat_n.get(c["category"], 0) >= per_cat:
         continue
     picked.append(c)
-    seen_cats.add(c["category"])
+    cat_n[c["category"]] = cat_n.get(c["category"], 0) + 1
     if len(picked) >= MAX_JOBS:
         break
 
