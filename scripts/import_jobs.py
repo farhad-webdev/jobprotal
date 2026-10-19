@@ -34,6 +34,16 @@ API_BASE = os.environ.get("API_BASE_URL", "").rstrip("/")
 KEY = os.environ.get("AGENT_API_KEY", "")
 MAX_JOBS = int(os.environ.get("MAX_JOBS", "8"))
 FRESH_DAYS = int(os.environ.get("FRESH_DAYS", "3"))
+# Focus mode: comma-separated keywords; matching jobs are picked first.
+# e.g. FOCUS_KEYWORDS="wordpress,elementor,woocommerce,web design,frontend,php"
+FOCUS = [k.strip().lower() for k in os.environ.get("FOCUS_KEYWORDS", "").split(",") if k.strip()]
+
+
+def focus_hits(c):
+    if not FOCUS:
+        return 0
+    t = (c["title"] + " " + (c.get("summary") or "")).lower()
+    return sum(1 for k in FOCUS if k in t)
 # Auto-publish instead of leaving drafts (owner's choice: no manual approval wait)
 AUTO_PUBLISH = os.environ.get("AUTO_PUBLISH", "true").lower() == "true"
 
@@ -340,10 +350,49 @@ try:
 except Exception as e:
     print(f"Arbeitnow fetch failed: {e}")
 
+# --- jobs.wordpress.net (official WordPress jobs board, RSS) ---
+try:
+    wp_added = 0
+    for feed_url, wpcat in [
+        ("https://jobs.wordpress.net/job_category/development/feed/", "Engineering"),
+        ("https://jobs.wordpress.net/job_category/design/feed/", "Design"),
+    ]:
+        raw = fetch(feed_url, raw=True)
+        root = ET.fromstring(raw)
+        for item in root.iter("item"):
+            title = (item.find("title").text or "").strip() if item.find("title") is not None else ""
+            link = (item.find("link").text or "").strip() if item.find("link") is not None else ""
+            if not title or not link:
+                continue
+            try:
+                d = parsedate_to_datetime(item.find("pubDate").text)
+                if d.tzinfo is None:
+                    d = d.replace(tzinfo=timezone.utc)
+            except Exception:
+                d = None
+            if not d or (now - d).days > FRESH_DAYS:
+                continue
+            candidates.append({
+                "title": title, "companyName": "See job post",
+                "location": "Remote", "jobType": "Remote",
+                "category": wpcat,
+                "salaryMin": None, "salaryMax": None,
+                "salaryText": "As per job post", "salaryCurrency": "USD",
+                "summary": f"WordPress job posted on the official WordPress jobs board: {title}",
+                "applyUrl": link, "sourceName": "WordPress Jobs", "sourceUrl": link,
+                "postedDate": d.date().isoformat(),
+                "deadline": (d + timedelta(days=30)).date().isoformat(),
+            })
+            wp_added += 1
+    print(f"WordPress Jobs board: {wp_added} candidates")
+except Exception as e:
+    print(f"WordPress Jobs failed: {e}")
+
 # pick up to MAX_JOBS, capping each category for diversity
+# focus keywords (FOCUS_KEYWORDS) get picked first
 picked, cat_n = [], {}
 per_cat = max(2, MAX_JOBS // 4)
-for c in sorted(candidates, key=lambda x: x["postedDate"], reverse=True):
+for c in sorted(candidates, key=lambda x: (focus_hits(x), x["postedDate"]), reverse=True):
     if not c["title"] or not c["companyName"] or not c["applyUrl"] or not c["sourceUrl"]:
         continue
     if cat_n.get(c["category"], 0) >= per_cat:
